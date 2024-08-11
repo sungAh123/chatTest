@@ -22,14 +22,16 @@ function init() {
 
   // 연결이 수신되었을 때 발생하는 이벤트
   peer.on("connection", function (conn) {
+    // 새로운 연결이 생길 때마다 connections 배열에 추가
     connections.push(conn);
+
     conn.on("open", function () {
       $("#status").html("Connected to: " + conn.peer);
-
       ready(conn);
     });
 
     conn.on("close", function () {
+      // 연결이 닫힐 때 connections 배열에서 제거
       connections = connections.filter((c) => c !== conn);
       $("#status").html("Connection closed. Awaiting connection..");
     });
@@ -64,7 +66,9 @@ function ready(conn) {
   conn.on("data", function (data) {
     addMessage(data, "left"); // 수신한 메시지를 왼쪽에 추가
 
+    // 받은 메시지를 다른 모든 연결된 클라이언트에 브로드캐스트
     connections.forEach((c) => {
+      // 자기 자신에게는 전송하지 않음
       if (c.peer !== conn.peer) {
         c.send(data);
       }
@@ -125,9 +129,7 @@ $(document).ready(function () {
       if (connections.length > 0) {
         var msg = $("#sendMessageBox").val(); // 메시지 입력 값 가져오기
         $("#sendMessageBox").val(""); // 메시지 입력 칸 비우기
-
         addMessage(msg, "right"); // 보낸 메시지를 오른쪽에 추가
-
         // 모든 연결된 클라이언트에게 메시지 전송
         connections.forEach((c) => {
           c.send(msg);
