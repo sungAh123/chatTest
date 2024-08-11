@@ -1,5 +1,5 @@
 let peer = null;
-let conn = null; // 전역 변수로 선언하여 다른 함수에서도 접근할 수 있도록 함
+let connections = []; // 전역 변수로 선언하여 다른 함수에서도 접근할 수 있도록 함
 
 function init() {
   // Peer 클래스 생성자를 사용해 새로운 peer 객체를 생성
@@ -21,20 +21,22 @@ function init() {
   });
 
   // 연결이 수신되었을 때 발생하는 이벤트
-  peer.on("connection", function (con2) {
-    // 이미 다른 클라이언트와 연결된 경우
-    if (conn && conn.open) {
-      con2.on("open", function () {
-        con2.send("Already connected to another client"); // 연결 거부 메시지 전송
-        setTimeout(function () {
-          con2.close();
-        }, 500); // 일정 시간이 지난 후 연결 종료
-      });
-    }
+  peer.on("connection", function (conn) {
+    connections.push(conn);
+    conn.on("open", function () {
+      $("#status").html("Connected to: " + conn.peer);
 
-    conn = con2; // 현재 연결을 갱신
-    $("#status").html("Connected to: " + conn.peer); // 상태 메시지 업데이트
-    ready(); // 연결 준비 함수 호출
+      ready(conn);
+    });
+
+    conn.on("close", function () {
+      connections = connections.filter((c) => c !== conn);
+      $("#status").html("Connection closed. Awaiting connection..");
+    });
+
+    // conn = con2; // 현재 연결을 갱신
+    // $("#status").html("Connected to: " + conn.peer); // 상태 메시지 업데이트
+    // ready(); // 연결 준비 함수 호출
   });
 
   // Peer 서버와의 연결이 끊어졌을 때 발생하는 이벤트
@@ -47,7 +49,7 @@ function init() {
 
   // Peer 객체가 닫혔을 때 발생하는 이벤트
   peer.on("close", function () {
-    conn = null; // 연결 객체 초기화
+    connections = []; // 연결 객체 초기화
     $("#status").html("connection destroyed"); // 상태 메시지 업데이트
   });
 
@@ -57,10 +59,16 @@ function init() {
   });
 }
 
-function ready() {
+function ready(conn) {
   // 연결된 클라이언트로부터 데이터 수신 시 이벤트
   conn.on("data", function (data) {
     addMessage(data, "left"); // 수신한 메시지를 왼쪽에 추가
+
+    connections.forEach((c) => {
+      if (c.peer !== conn.peer) {
+        c.send(data);
+      }
+    });
   });
 
   // 연결이 닫혔을 때 발생하는 이벤트
@@ -114,11 +122,16 @@ $(document).ready(function () {
   $("#sendMessageBox").keydown(function (key) {
     // 메시지 박스에서 Enter 키가 눌렸을 때 이벤트
     if (key.keyCode == 13) {
-      if (conn && conn.open) {
+      if (connections.length > 0) {
         var msg = $("#sendMessageBox").val(); // 메시지 입력 값 가져오기
         $("#sendMessageBox").val(""); // 메시지 입력 칸 비우기
-        conn.send(msg); // 연결된 클라이언트로 메시지 전송
+
         addMessage(msg, "right"); // 보낸 메시지를 오른쪽에 추가
+
+        // 모든 연결된 클라이언트에게 메시지 전송
+        connections.forEach((c) => {
+          c.send(msg);
+        });
       } else {
         $("#status").html("Connection is closed"); // 연결이 닫혀 있음을 알림
       }
