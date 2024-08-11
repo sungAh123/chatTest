@@ -399,3 +399,78 @@ ul {
 .status {
   padding: 10px 0;
 }
+
+/* 공통 메시지 스타일 */
+.chat-message {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+/* 공통 닉네임 및 이미지 스타일 */
+.chat-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 10px; /* 메시지와의 간격 */
+}
+
+.chat-avatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.chat-name {
+  font-size: 0.75em;
+  color: gray;
+  margin-top: 5px;
+}
+
+.chat-text {
+  max-width: 60%;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+/* 오른쪽 메시지 */
+.chat-message.right {
+  justify-content: flex-end;
+}
+
+.chat-message.right .chat-hour {
+  font-size: 0.75em;
+  color: gray;
+  margin-left: 10px;
+}
+
+.chat-message.right .chat-text {
+  background-color: #007bff;
+  color: white;
+  margin-left: 10px;
+}
+
+.chat-message.right .chat-avatar {
+  order: 1; /* 메시지 왼쪽에 위치 */
+}
+
+/* 왼쪽 메시지 */
+.chat-message.left {
+  justify-content: flex-start;
+}
+
+.chat-message.left .chat-text {
+  background-color: #e9ecef;
+  color: black;
+  margin-left: 10px;
+}
+
+.chat-message.left .chat-hour {
+  font-size: 0.75em;
+  color: gray;
+  margin-left: 10px;
+}
+
+.chat-message.left .chat-avatar {
+  order: 0; /* 이미지가 왼쪽에 위치 */
+}

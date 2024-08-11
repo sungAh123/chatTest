@@ -69,7 +69,7 @@ function join() {
   });
 }
 
-function addMessage(msg, side) {
+function addMessage(msg, side, userName, userImg) {
   // 시간 가져옴
   var now = new Date();
   var h = now.getHours();
@@ -82,30 +82,27 @@ function addMessage(msg, side) {
   if (s < 10) s = "0" + s;
 
   var msgHtml = [];
+  msgHtml.push('<li class="chat-message ' + side + '">');
+
   if (side == "right") {
-    // 송신 메세지 형식
-    msgHtml.push('<li class="chat-right">');
-    msgHtml.push('<div class="chat-hour">' + h + ":" + m + ":" + s + " </div>");
-    msgHtml.push('<div class="chat-text"> ' + msg + "</div>");
-    msgHtml.push(
-      '<div class="chat-avatar"><img src="https://www.bootdey.com/img/Content/avatar/avatar4.png" alt="Retail Admin"/>'
-    );
-    msgHtml.push('<div class="chat-name">Sam</div>');
-    msgHtml.push("</div>");
-    msgHtml.push("</li>");
-  } else {
-    // 수신 메세지 형식
-    msgHtml.push('<li class="chat-left">');
+    // 오른쪽 메시지 형식
+    msgHtml.push('<div class="chat-hour">' + h + ":" + m + ":" + s + "</div>");
+    msgHtml.push('<div class="chat-text">' + msg + "</div>");
     msgHtml.push('<div class="chat-avatar">');
-    msgHtml.push(
-      '<img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin" />'
-    );
-    msgHtml.push('<div class="chat-name">Russell</div>');
+    msgHtml.push('<img src="' + userImg + '" alt="' + userName + '"/>');
+    msgHtml.push('<div class="chat-name">' + userName + "</div>");
     msgHtml.push("</div>");
-    msgHtml.push('<div class="chat-text"> ' + msg + " </div> ");
-    msgHtml.push('<div class="chat-hour"> ' + h + ":" + m + ":" + s + "</div>");
-    msgHtml.push("</li>");
+  } else {
+    // 왼쪽 메시지 형식
+    msgHtml.push('<div class="chat-avatar">');
+    msgHtml.push('<img src="' + userImg + '" alt="' + userName + '"/>');
+    msgHtml.push('<div class="chat-name">' + userName + "</div>");
+    msgHtml.push("</div>");
+    msgHtml.push('<div class="chat-text">' + msg + "</div>");
+    msgHtml.push('<div class="chat-hour">' + h + ":" + m + ":" + s + "</div>");
   }
+
+  msgHtml.push("</li>");
 
   $("#chat_box").append(msgHtml.join("")); // 메세지 추가
 }
