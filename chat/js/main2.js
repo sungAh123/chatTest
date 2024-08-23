@@ -1,9 +1,11 @@
 let peer = null;
 let connections = []; // 전역 변수로 선언하여 다른 함수에서도 접근할 수 있도록 함
+let userName = "Anonymous"; // 기본 닉네임
+let roomId = ""; // 방 ID
 
-function init() {
+function init(roomId) {
   // Peer 클래스 생성자를 사용해 새로운 peer 객체를 생성
-  peer = new Peer();
+  peer = new Peer(roomId); // 방 이름을 PeerJS ID로 사용
   let lastPeerId = null; // 마지막으로 사용된 peer ID를 저장하기 위한 변수
 
   // Peer 서버에 연결되었을 때 발생하는 이벤트
@@ -120,7 +122,22 @@ function addMessage(msg, side, userName, userImg) {
 }
 
 $(document).ready(function () {
-  init(); // 초기화 함수 호출
+  userName = prompt("Enter your nickname:"); // 닉네임을 알림창으로 입력받음
+
+  if (userName === null || userName.trim() === "") {
+    userName = "Anonymous"; // 닉네임을 입력하지 않으면 기본값 설정
+  }
+
+  $("#create-room-button").click(function () {
+    roomId = $("#room-id").val().trim();
+    if (roomId === "") {
+      alert("Please enter a room name");
+    } else {
+      init(roomId); // 방 이름을 ID로 설정
+      $("#room-id").val(roomId);
+      $("#create-room-button").hide();
+    }
+  });
 
   $("#sendMessageBox").keydown(function (key) {
     // 메시지 박스에서 Enter 키가 눌렸을 때 이벤트
@@ -128,7 +145,12 @@ $(document).ready(function () {
       if (connections.length > 0) {
         var msg = $("#sendMessageBox").val(); // 메시지 입력 값 가져오기
         $("#sendMessageBox").val(""); // 메시지 입력 칸 비우기
-        addMessage(msg, "right"); // 보낸 메시지를 오른쪽에 추가
+        addMessage(
+          msg,
+          "right",
+          userName,
+          "https://www.bootdey.com/img/Content/avatar/avatar4.png"
+        ); // 보낸 메시지를 오른쪽에 추가
         // 모든 연결된 클라이언트에게 메시지 전송
         connections.forEach((c) => {
           c.send(msg);
