@@ -11,6 +11,7 @@
     />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="/chat/css/main.css">
+    <link rel="stylesheet" href="/chat/css/createIDserver.css">
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
   </head>
@@ -22,10 +23,21 @@
           <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
             <h5 class="title">Chat App</h5>
           </div>
-          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+          <!-- <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
             <span>방 이름: </span>
             <input type="text" id="room-id" placeholder="Input the room name">
             <button type="button" class="btn btn-primary" id="create-room-button">Create Room</button>
+          </div> -->
+          <div id="setup-container">
+            <div class="input-group">
+              <label for="nickname-input">Nickname:</label>
+              <input id="nickname-input" type="text" placeholder="Enter your nickname" />
+            </div>
+            <div class="input-group">
+              <label for="room-id-input">Room Name:</label>
+              <input id="room-id-input" type="text" placeholder="Enter room name" />
+            </div>
+            <button id="create-room-button">Create Room</button>
           </div>
         </div>
         <div class="row status" id="status"></div>

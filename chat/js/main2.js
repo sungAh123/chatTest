@@ -121,36 +121,52 @@ function addMessage(msg, side, userName, userImg) {
   $("#chat_box").append(msgHtml.join(""));
 }
 
-$(document).ready(function () {
-  userName = prompt("Enter your nickname:"); // 닉네임을 알림창으로 입력받음
+document
+  .getElementById("create-room-button")
+  .addEventListener("click", function () {
+    var nicknameInput = document.getElementById("nickname-input");
+    var roomIdInput = document.getElementById("room-id-input");
 
-  if (userName === null || userName.trim() === "") {
-    userName = "Anonymous"; // 닉네임을 입력하지 않으면 기본값 설정
-  }
+    var nickname = nicknameInput.value.trim();
+    var roomId = roomIdInput.value.trim();
 
-  $("#create-room-button").click(function () {
-    roomId = $("#room-id").val().trim();
-    if (roomId === "") {
-      alert("Please enter a room name");
-    } else {
-      init(roomId); // 방 이름을 ID로 설정
-      $("#room-id").val(roomId);
-      $("#create-room-button").hide();
+    if (nickname === "" || roomId === "") {
+      alert("Please enter both your nickname and room name.");
+      return;
     }
+
+    // 입력된 닉네임과 방 이름을 사용
+    alert("Welcome " + nickname + " to the room: " + roomId);
+
+    // 읽기 전용으로 변경
+    nicknameInput.value = nickname;
+    nicknameInput.readOnly = true;
+
+    roomIdInput.value = roomId;
+    roomIdInput.readOnly = true;
+
+    init(roomId); // 방을 생성하는 init 함수 호출
+
+    // userName과 roomId를 전역 변수로 설정하여 다른 함수에서도 접근 가능하도록 함
+    window.userName = nickname;
+    window.roomId = roomId;
   });
 
+$(document).ready(function () {
   $("#sendMessageBox").keydown(function (key) {
     // 메시지 박스에서 Enter 키가 눌렸을 때 이벤트
     if (key.keyCode == 13) {
       if (connections.length > 0) {
         var msg = $("#sendMessageBox").val(); // 메시지 입력 값 가져오기
         $("#sendMessageBox").val(""); // 메시지 입력 칸 비우기
+
         addMessage(
           msg,
           "right",
-          userName,
+          window.userName, // userName을 전역 변수로 참조
           "https://www.bootdey.com/img/Content/avatar/avatar4.png"
         ); // 보낸 메시지를 오른쪽에 추가
+
         // 모든 연결된 클라이언트에게 메시지 전송
         connections.forEach((c) => {
           c.send(msg);
